@@ -9,7 +9,8 @@ f2 = open("data/non_clickbait_data.txt", encoding="utf-8")
 non_clickbait = f2.readlines()
 
 # Create test data
-test_data = clickbait[len(clickbait)*2//3:]+non_clickbait[len(non_clickbait)*2//3:]
+test_clickbait_data = clickbait[len(clickbait)*2//3:]
+test_non_clickbait_data = non_clickbait[len(non_clickbait)*2//3:]
 clickbait = clickbait[:len(clickbait)*2//3-1]
 non_clickbait = non_clickbait[:len(non_clickbait)*2//3-1]
 
@@ -78,6 +79,18 @@ def classify(text):
 		return "clickbait"
 	else:
 		return "not clickbait"
-print("Romanian parliament ratifies EU accession treaty" in clickbait)
+
 print(classify("The Names Of Popular Celebrities According To My Mom"))
 print(classify("Romanian parliament ratifies EU accession treaty"))
+
+correct_count = 0;
+for title in test_clickbait_data:
+	if(classify(title) == "clickbait"):
+		correct_count += 1
+
+for title in test_non_clickbait_data:
+	if(classify(title) == "not clickbait"):
+		correct_count += 1
+
+accuracy = correct_count / (len(test_clickbait_data)+len(test_non_clickbait_data))
+print("Accuracy: " + str(accuracy))
