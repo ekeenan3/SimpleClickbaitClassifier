@@ -1,6 +1,4 @@
-import os
 
-print(os.getcwd())
 
 # Open data files
 f = open("data/clickbait_data.txt", encoding="utf-8")
@@ -50,10 +48,13 @@ for word in non_clickbait_wordcount:
 # print(total_non_clickbait_words)
 # print(total_words)
 
+# Classifies title as clickbait or not clickbait
 def classify(text):
+	# Find probabilities of categories without given title
 	P_clickbait = len(clickbait)/(len(clickbait)+len(non_clickbait))
 	P_non_clickbait = 1-P_clickbait
 
+	# Find probability of the title given a specific classification
 	P_text_clickbait = 1
 	for word in text.split():
 		numer = 1
@@ -70,19 +71,26 @@ def classify(text):
 		denom = total_non_clickbait_words + total_unique_words
 		P_text_non_clickbait *= numer/denom
 
+	# Probability of classification times probability of title given the
+	# classification is proportional to the probability of the classification
+	# given the title
+
+	# Find proportionality constant and then probability of classifications
 	proportionality = 1 / (P_clickbait*P_text_clickbait + P_non_clickbait*P_text_non_clickbait)
 	P_text_is_clickbait = proportionality*P_clickbait*P_text_clickbait
 	P_text_is_not_clickbait = proportionality*P_non_clickbait*P_text_non_clickbait
 	print([P_text_is_clickbait, P_text_is_not_clickbait])
 
+	# Finding the actual probabilities is unnecessary for classifying the title
+	# but gives a better description of the algorithms confidence
+
+	# Return predicted classification
 	if(P_text_is_clickbait >= P_text_is_not_clickbait):
 		return "clickbait"
 	else:
 		return "not clickbait"
 
-print(classify("The Names Of Popular Celebrities According To My Mom"))
-print(classify("Romanian parliament ratifies EU accession treaty"))
-
+# Test the testing data
 correct_count = 0;
 for title in test_clickbait_data:
 	if(classify(title) == "clickbait"):
@@ -92,5 +100,6 @@ for title in test_non_clickbait_data:
 	if(classify(title) == "not clickbait"):
 		correct_count += 1
 
+# Print accuracy of the algorithm
 accuracy = correct_count / (len(test_clickbait_data)+len(test_non_clickbait_data))
 print("Accuracy: " + str(accuracy))
